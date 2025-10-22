@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "autofocus.h"
+#include "AutoFocus.h"
 
 #include <iostream>
 
