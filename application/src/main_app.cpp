@@ -1,10 +1,11 @@
 #include "CalibrationData.h"
 #include "DepthSensor.h"
-#include "FocusMotor.h"
+#include "Camera.h"
 
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <filesystem>
 
 
 int main(int argc, char* argv[]) {
@@ -16,6 +17,9 @@ int main(int argc, char* argv[]) {
 
     const std::string calibFile = argv[1];
     const std::string depthFile = argv[2];
+
+    std::filesystem::path pathObj(depthFile);
+    std::string filename_no_ext = pathObj.stem().string();
 
     try {
         
@@ -50,24 +54,38 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "[OK] Focus sequence: " << focusList.size() << " positions" <<std::endl;
 
-        // Move motor and take snapshot
+        // Move focus camera motor and take snapshot
         //
-        motor::FocusMotor motor(0, 100000); // Just a random motor
+        cv::Mat overall_mask = cv::Mat::zeros(depthMat.size(), CV_8UC1);
+        cam::Camera camera(0, 100000); // Just a random camera
+        int i = 0;
         for (const auto& f : focusList) {
             std::cout << "Moving to focus position: "
-                      << f.focusPosition << "  (PPN=" << f.ppn 
-                      << ", DPN=" << f.dpn << ")" <<std::endl;
+                      << f.focusPosition <<std::endl;
 
-            motor.setPosition(f.focusPosition);
+            camera.setFocusPosition(f.focusPosition);
 
-            // TODO: Wait until motor is in position & Timeout & Likely running on a different thread
-            while(motor.getPosition() != f.focusPosition);
+            // TODO: Wait until camera focus is in position & Timeout & Likely running on a different thread
+            while(camera.getFocusPosition() != f.focusPosition);
 
             // Take snapshot picture
-            std::cout << "SNAPSHOT ! @ position " << motor.getPosition() << std::endl;
+            const auto& mask = cam::Camera::takePictureMask(depthMat, f.ppn, f.dpn);
+            
+            // Output png file per snapshot
+            std::string filename = filename_no_ext + "_" + std::to_string(i) 
+                + "_"  + std::to_string(f.ppn) + "_" + std::to_string(f.dpn) + ".png";
+            cv::imwrite(filename, mask);
+            i++;
+            std::cout << "SNAPSHOT ! @ position " << camera.getFocusPosition() <<" => " <<filename << std::endl;
+
+            // Merge the depth masks
+            cv::bitwise_or(overall_mask, mask, overall_mask);
         }
 
-        std::cout << "[DONE] Focus sweep complete." <<std::endl;
+        // Overall Output png file combining all the masks
+        std::string filename = filename_no_ext + "_overall_"  + std::to_string(ppn_target) + "_" + std::to_string(dpn_target) + ".png";
+        cv::imwrite(filename, overall_mask);
+        std::cout << "[DONE] Focus sweep complete and merged => " <<filename <<std::endl;
     }
     catch (const std::exception& e) {
         std::cerr << "Fatal error: " << e.what() << std::endl;

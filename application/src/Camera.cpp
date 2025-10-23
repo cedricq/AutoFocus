@@ -3,15 +3,17 @@
 #include <string>
 #include <stdexcept>
 
+namespace cam
+{
 
-cv::Mat Camera::computeFocusMask(const cv::Mat& depthMap, int ppn, int dpn)
+cv::Mat Camera::takePictureMask(const cv::Mat& depthMap, int ppn, int dpn) 
 {
     if (depthMap.empty()) {
-        throw std::invalid_argument("Camera::computeFocusMask: input depth map is empty.");
+        throw std::invalid_argument("Camera::takePictureMask: input depth map is empty.");
     }
 
     if (depthMap.type() != CV_16UC1) {
-        throw std::invalid_argument("Camera::computeFocusMask: expected CV_16UC1 depth map.");
+        throw std::invalid_argument("Camera::takePictureMask: expected CV_16UC1 depth map.");
     }
 
     cv::Mat mask = cv::Mat::zeros(depthMap.size(), CV_8UC1);
@@ -21,3 +23,18 @@ cv::Mat Camera::computeFocusMask(const cv::Mat& depthMap, int ppn, int dpn)
 
     return mask;
 }
+
+Camera::Camera(int minPos, int maxPos)
+        : minFocusPosition_(minPos), maxFocusPosition_(maxPos), currentFocusPosition_(minPos)
+    {}
+
+void Camera::setFocusPosition(int position) {
+    if (position < minFocusPosition_ || position > maxFocusPosition_) {
+        throw std::out_of_range("Focus position out of range");
+    }
+
+    // For simulation: instant move
+    currentFocusPosition_ = position;
+}
+
+} // namespace

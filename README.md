@@ -15,10 +15,11 @@ Vocabulaire
 | DPN | Dernier Plan Net |
 | Focus Position | Paramètre moteur du Focus |
 
+The prodided input data are store gere: `/data`.
 
 
 ### Prerequisite
-For time reasons I chose opencv to handle the pixel matrices. With more time I would have likely chose libpng and more standard c++ approach to avoid such a dependency.
+For time reasons I've chosen opencv to handle the pixel matrices. 
 
 ```
 sudo apt-get install libopencv-dev
@@ -28,9 +29,54 @@ sudo apt-get install libopencv-dev
 
 Ensure you have gcc or any c++ compiler added into your system path. Then, run the following commands on Windows for example:
 
-Run directly from project root directory:
+Build directly from project root directory:
+```bash
+cmake -S . -B build && cmake --build build
 ```
-cmake -S . -B build
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
+
+Run unit tests:
+```bash
+cd build && ctest
 ```
+For more detailed output:
+```bash
+cd build/application/test && ./unit_tests
+```
+
+
+### Run the Autofocus Main application
+
+Within `build/application`, run :
+
+```bash
+./autofocus_main test/data/calibration.csv test/data/depth_1.png
+```
+
+Here is output you'll get :
+```bash
+[OK] Calibration file loaded (36 points)
+[OK] Depth map loaded: 1920x1080 pixels
+Scene depth range: [0, 397] mm
+[OK] Focus sequence: 7 positions
+Moving to focus position: 31826
+SNAPSHOT ! @ position 31826 => depth_1_0_343_349.png
+Moving to focus position: 30669
+SNAPSHOT ! @ position 30669 => depth_1_1_349_355.png
+Moving to focus position: 29225
+SNAPSHOT ! @ position 29225 => depth_1_2_355_361.png
+Moving to focus position: 28280
+SNAPSHOT ! @ position 28280 => depth_1_3_360_368.png
+Moving to focus position: 26561
+SNAPSHOT ! @ position 26561 => depth_1_4_369_378.png
+Moving to focus position: 25030
+SNAPSHOT ! @ position 25030 => depth_1_5_379_389.png
+Moving to focus position: 23656
+SNAPSHOT ! @ position 23656 => depth_1_6_390_400.png
+[DONE] Focus sweep complete and merged => depth_1_overall_0_397.png
+```
+
+Within the same directory, it will create N png files containing the mask for each focus position taken.
+And one overall file combining all the mask files together (bitwise OR).
+
+Here is an example of a png output: 
+![Example output](doc/depth_1_1_349_355.png)

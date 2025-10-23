@@ -5,7 +5,29 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
-TEST(CAMERA, test)
+using namespace cam;
+
+
+TEST(CAMERA, Creation)
+{
+    auto camera = Camera(0, 500);
+    ASSERT_EQ(0, camera.getFocusPosition());
+    ASSERT_EQ(0, camera.getMinFocusPosition());
+    ASSERT_EQ(500, camera.getMaxFocusPosition());
+}
+
+TEST(CAMERA, Move)
+{
+    auto camera = Camera(300, 600);
+    ASSERT_EQ(300, camera.getFocusPosition());
+    ASSERT_EQ(300, camera.getMinFocusPosition());
+    ASSERT_EQ(600, camera.getMaxFocusPosition());
+
+    camera.setFocusPosition(500);
+    ASSERT_EQ(500, camera.getFocusPosition());
+}
+
+TEST(CAMERA, DepthMask)
 {
     cv::Mat depth = (cv::Mat_<uint16_t>(3, 3) <<
         380, 395, 410,
@@ -13,7 +35,7 @@ TEST(CAMERA, test)
         470, 480, 490
     );
 
-    cv::Mat output = Camera::computeFocusMask(depth, 419, 461);
+    cv::Mat output = Camera::takePictureMask(depth, 419, 461);
 
     cv::Mat expected = (cv::Mat_<uint8_t>(3, 3) <<
         0, 0, 0,
