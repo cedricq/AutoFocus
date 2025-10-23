@@ -11,6 +11,25 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build docker image
-      run: docker build -t docker_img .
-    - name: Run tests in docker
-      run: docker run --rm docker_img:latest
+      run: | 
+        docker build -t docker_img .
+        docker run -d --name ci_container docker_img tail -f /dev/null
+    - name: Build code
+      run: docker exec ci_container bash -c "mkdir -p build && cd build && cmake .. && make"
+    - name: Run unit tests in docker
+      run: docker exec ci_container bash -c "ctest --test-dir build --output-on-failure"
+    - name: Run main app in docker
+      run: docker exec ci_container bash -c "cd build/main && ./autofocus_main data/calibration.csv data/depth_1.png && ./autofocus_main data/calibration.csv data/depth_2.png"
+    - name: Copy artifacts from docker
+      run: |
+        mkdir artifacts 
+        docker exec ci_container bash -c 'cp /app/build/main/*.png /tmp/'
+        docker cp ci_container:/tmp/. ./artifacts
+    - name: Upload test png results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-outputs
+        path: artifacts/
+    - name: Stop and remove container
+      if: always()
+      run: docker rm -f ci_container

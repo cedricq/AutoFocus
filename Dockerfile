@@ -21,10 +21,7 @@ WORKDIR /app
 # Copy project files
 COPY . .
 
-# Create build directory
-RUN mkdir build && cd build && cmake .. && make
+# Create artifact directory
+RUN mkdir artifacts
 
-WORKDIR /app/build
 
-# Define default command
-CMD ["ctest"]
