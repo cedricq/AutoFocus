@@ -11,7 +11,7 @@ namespace calib
 bool CalibrationData::loadFromCSV(const std::string& filepath) {
     std::ifstream file(filepath);
     if (!file.is_open()) {
-        std::cerr << "Error: could not open file " << filepath << "\n";
+        std::cerr << "Error: could not open file " << filepath << std::endl;
         return false;
     }
 
@@ -34,8 +34,6 @@ bool CalibrationData::loadFromCSV(const std::string& filepath) {
 
         data_.push_back(point);
     }
-
-    std::cout << "✅ Calibration file loaded: " << data_.size() << " rows.\n";
     return true;
 }
 
@@ -43,10 +41,10 @@ const CalibrationPoint* CalibrationData::findClosestFocus(int focusPosition) con
     if (data_.empty()) return nullptr;
 
     const CalibrationPoint* closest = &data_[0];
-    double minDiff = std::abs(focusPosition - data_[0].focusPosition);
+    int minDiff = std::abs(focusPosition - data_[0].focusPosition);
 
     for (const auto& p : data_) {
-        double diff = std::abs(focusPosition - p.focusPosition);
+        int diff = std::abs(focusPosition - p.focusPosition);
         if (diff < minDiff) {
             minDiff = diff;
             closest = &p;
@@ -55,37 +53,38 @@ const CalibrationPoint* CalibrationData::findClosestFocus(int focusPosition) con
     return closest;
 }
 
-std::vector<int> CalibrationData::computeFocusSequence(int ppn_target, int dpn_target) const {
-    std::vector<int> focusList;
+std::vector<CalibrationPoint> CalibrationData::computeFocusSequence(int ppn_target, int dpn_target) const {
+    
+    std::vector<CalibrationPoint> focusList;
 
     if (data_.empty()) {
-        std::cerr << "Error: no calibration data loaded.\n";
+        std::cerr << "Error: no calibration data loaded." << std::endl;
         return focusList;
     }
 
     // Sort calibration points by their near sharp limit (PPN)
     std::vector<CalibrationPoint> sorted = data_;
     std::sort(sorted.begin(), sorted.end(),
-              [](const CalibrationPoint& a, const CalibrationPoint& b) {
-                  return a.ppn < b.ppn;
-              });
+        [](const CalibrationPoint& a, const CalibrationPoint& b) {
+            return a.ppn < b.ppn;
+        });
 
-    double current = ppn_target;
+    // Find first calibration point whose range covers the current depth
+    auto it = std::find_if(sorted.begin(), sorted.end(),
+        [ppn_target](const CalibrationPoint& p) {
+            return ( p.ppn <= ppn_target && p.dpn >= ppn_target );
+        });
 
-    while (current < dpn_target) {
-        // Find first calibration point whose range covers the current depth
-        auto it = std::find_if(sorted.begin(), sorted.end(),
-            [current](const CalibrationPoint& p) {
-                return (p.ppn <= current && p.dpn >= current);
-            });
+    // No focus available in the calibration table => returns empty list
+    if (it == sorted.end()) {
+        std::cerr << "Warning: no calibration covers depth " << ppn_target << " mm." << std::endl;
+        return focusList;
+    }
 
-        if (it == sorted.end()) {
-            std::cerr << "Warning: no calibration covers depth " << current << " mm.\n";
-            break;
-        }
-
-        focusList.push_back(it->focusPosition);
-        current = it->dpn; // jump to the next uncovered depth
+    // Finds all the focuses within the depth range
+    while (it != sorted.end() && it->dpn >= ppn_target && it->ppn <= dpn_target) {
+        focusList.push_back(*it);
+        ++it;
     }
 
     return focusList;

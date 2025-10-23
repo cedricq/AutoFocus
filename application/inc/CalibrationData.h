@@ -13,7 +13,7 @@ struct CalibrationPoint {
     int focusPosition;   // Motor position value
     int ppn;             // Near limit of sharp focus (PPN, mm)
     int dpn;             // Far limit of sharp focus (DPN, mm)
-    int iso;                // ISO sensitivity
+    int iso;             // ISO sensitivity
     int speed;           // Shutter speed (1/s)
 };
 
@@ -29,7 +29,7 @@ public:
     const CalibrationPoint* findClosestFocus(int focusPosition) const;
 
     // Compute a focus sequence to achieve a target sharp range
-    std::vector<int> computeFocusSequence(int ppn_target, int dpn_target) const;
+    std::vector<CalibrationPoint> computeFocusSequence(int ppn_target, int dpn_target) const;
 
 private:
     std::vector<CalibrationPoint> data_;
