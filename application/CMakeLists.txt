@@ -5,6 +5,7 @@ add_library(${PROJECT_NAME}
     src/CalibrationData.cpp 
     src/DepthSensor.cpp
     src/FocusMotor.cpp
+    src/Camera.cpp
     )
 target_include_directories(${PROJECT_NAME} 
     PUBLIC 

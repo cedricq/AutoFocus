@@ -5,6 +5,7 @@ add_executable (${PROJECT_NAME}
     CalibrationData_t.cpp 
     DepthSensor_t.cpp 
     FocusMotor_t.cpp
+    Camera_t.cpp
     )
 target_link_libraries(${PROJECT_NAME} gtest_main autofocus)
 

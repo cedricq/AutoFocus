@@ -11,16 +11,16 @@ public:
     FocusMotor(int minPos, int maxPos);
 
     // Simulate setting the motor position
-    void SetPosition(int position);
+    void setPosition(int position);
 
     // Simulate reading the current position
-    int GetPosition() const {
+    int getPosition() const {
         return currentPosition_;
     }
 
     // Optional: expose limits
-    int GetMinPosition() const { return minPosition_; }
-    int GetMaxPosition() const { return maxPosition_; }
+    int getMinPosition() const { return minPosition_; }
+    int getMaxPosition() const { return maxPosition_; }
 
 private:
     int minPosition_;

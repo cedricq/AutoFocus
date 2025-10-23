@@ -58,13 +58,13 @@ int main(int argc, char* argv[]) {
                       << f.focusPosition << "  (PPN=" << f.ppn 
                       << ", DPN=" << f.dpn << ")" <<std::endl;
 
-            motor.SetPosition(f.focusPosition);
+            motor.setPosition(f.focusPosition);
 
             // TODO: Wait until motor is in position & Timeout & Likely running on a different thread
-            while(motor.GetPosition() != f.focusPosition);
+            while(motor.getPosition() != f.focusPosition);
 
             // Take snapshot picture
-            std::cout << "SNAPSHOT ! @ position " << motor.GetPosition() << std::endl;
+            std::cout << "SNAPSHOT ! @ position " << motor.getPosition() << std::endl;
         }
 
         std::cout << "[DONE] Focus sweep complete." <<std::endl;
