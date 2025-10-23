@@ -17,6 +17,9 @@ FetchContent_MakeAvailable(googletest)
 
 include(CTest)
 
+find_package(OpenCV REQUIRED)
+
+
 add_subdirectory(application)
 #add_subdirectory(integ)
 

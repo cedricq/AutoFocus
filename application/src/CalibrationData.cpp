@@ -33,29 +33,26 @@ bool CalibrationData::loadFromCSV(const std::string& filepath) {
         std::getline(ss, token, ','); point.speed         = std::stod(token);
 
         data_.push_back(point);
+
+        // Record min ppn and max dpn possible values
+        if (ppn_min_ > point.ppn || ppn_min_ == 0)
+        {
+            ppn_min_ = point.ppn;
+        }
+        if (dpn_max_ < point.dpn || dpn_max_ == 0)
+        {
+            dpn_max_ = point.dpn;
+        }
     }
     return true;
 }
 
-const CalibrationPoint* CalibrationData::findClosestFocus(int focusPosition) const {
-    if (data_.empty()) return nullptr;
-
-    const CalibrationPoint* closest = &data_[0];
-    int minDiff = std::abs(focusPosition - data_[0].focusPosition);
-
-    for (const auto& p : data_) {
-        int diff = std::abs(focusPosition - p.focusPosition);
-        if (diff < minDiff) {
-            minDiff = diff;
-            closest = &p;
-        }
-    }
-    return closest;
-}
-
-std::vector<CalibrationPoint> CalibrationData::computeFocusSequence(int ppn_target, int dpn_target) const {
+std::vector<CalibrationPoint> CalibrationData::computeFocusSequence(int ppn, int dpn) const {
     
     std::vector<CalibrationPoint> focusList;
+
+    int ppn_target = std::max(ppn, ppn_min_);
+    int dpn_target = std::min(dpn, dpn_max_);
 
     if (data_.empty()) {
         std::cerr << "Error: no calibration data loaded." << std::endl;

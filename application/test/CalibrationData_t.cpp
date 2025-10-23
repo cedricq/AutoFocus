@@ -24,26 +24,8 @@ TEST(CALIB, LoadCSV)
         ASSERT_EQ(31826, p.focusPosition);
         ASSERT_EQ(343, p.ppn);
         ASSERT_EQ(349, p.dpn);
-    }
-}
-
-TEST(CALIB, FindFocus)
-{
-    CalibrationData calib;
-    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
-    const auto& data = calib.getData();
-
-    double targetFocus = 30000;
-
-    auto point = calib.findClosestFocus(targetFocus);
-    ASSERT_NE(nullptr, point);
-    if (point) {
-        std::cout << "Closest to " << targetFocus << ": "
-                  << point->focusPosition << " (sharp range "
-                  << point->ppn << " - " << point->dpn << " mm)" << std::endl;
-        ASSERT_EQ(30669, point->focusPosition);
-        ASSERT_EQ(349, point->ppn);
-        ASSERT_EQ(355, point->dpn);
+        ASSERT_EQ(343, calib.getPPNMin());
+        ASSERT_EQ(657, calib.getDPNMax());
     }
 }
 
@@ -78,6 +60,51 @@ TEST(CALIB, ComputeFocusSequence)
     ASSERT_EQ(421, focusList[2].dpn);
 }
 
+TEST(CALIB, ComputeFocusSequencePartialOutOfRangeLow)
+{
+    CalibrationData calib;
+    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    const auto& data = calib.getData();
+
+    int ppn_target = 0;
+    int dpn_target = 411;
+
+    auto focusList = calib.computeFocusSequence(ppn_target, dpn_target);
+    ASSERT_EQ(9, focusList.size());
+
+    std::cout << "Looking for focuses target matching the [" << ppn_target <<" " <<dpn_target  << "] mm range"<< std::endl;
+    for (auto it = focusList.begin(); it != focusList.end(); ++it) {
+        std::cout << it->focusPosition << " " << it->ppn << " " << it->dpn << std::endl;
+    }
+
+    // Just checking the 1st point output based on the ppn/dpn range
+    ASSERT_EQ(31826, focusList[0].focusPosition);
+    ASSERT_EQ(343, focusList[0].ppn);
+    ASSERT_EQ(349, focusList[0].dpn);
+}
+
+TEST(CALIB, ComputeFocusSequencePartialOutOfRangeHigh)
+{
+    CalibrationData calib;
+    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    const auto& data = calib.getData();
+
+    int ppn_target = 650;
+    int dpn_target = 3600;
+
+    auto focusList = calib.computeFocusSequence(ppn_target, dpn_target);
+    ASSERT_EQ(1, focusList.size());
+
+    std::cout << "Looking for focuses target matching the [" << ppn_target <<" " <<dpn_target  << "] mm range"<< std::endl;
+    for (auto it = focusList.begin(); it != focusList.end(); ++it) {
+        std::cout << it->focusPosition << " " << it->ppn << " " << it->dpn << std::endl;
+    }
+
+    // Just checking the only point output based on the ppn/dpn range
+    ASSERT_EQ(10450, focusList[0].focusPosition);
+    ASSERT_EQ(649, focusList[0].ppn);
+    ASSERT_EQ(657, focusList[0].dpn);
+}
 
 TEST(CALIB, ComputeFocusSequence_NoOutput)
 {

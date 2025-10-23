@@ -25,14 +25,15 @@ public:
     // Access all data points
     const std::vector<CalibrationPoint>& getData() const { return data_; }
 
-    // Find the closest calibration entry to a given focus motor position
-    const CalibrationPoint* findClosestFocus(int focusPosition) const;
-
     // Compute a focus sequence to achieve a target sharp range
     std::vector<CalibrationPoint> computeFocusSequence(int ppn_target, int dpn_target) const;
+    int getPPNMin() { return ppn_min_; }
+    int getDPNMax() { return dpn_max_; }
 
 private:
     std::vector<CalibrationPoint> data_;
+    int ppn_min_ {0};
+    int dpn_max_ {0};
 };
 
 
