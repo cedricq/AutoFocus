@@ -80,8 +80,9 @@ Within the same directory, it will create N png files containing the mask for ea
 And one overall file combining all the mask files together (bitwise OR).
 
 Here is an example of a png output: 
-![Example output](doc/depth_1_1_349_355.png)
+![Example output](doc/capture.gif)
 
 ### CI
 
 CI has been set up and uses Docker to build the code and run the unit tests suite.
+CI provides the output images of the test data depth_1.png and depth2.png as pipeline artifacts.
