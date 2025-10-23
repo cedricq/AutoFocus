@@ -20,7 +20,5 @@ include(CTest)
 find_package(OpenCV REQUIRED)
 
 
-add_subdirectory(application)
-#add_subdirectory(integ)
-
-
+add_subdirectory(autofocus)
+add_subdirectory(main)

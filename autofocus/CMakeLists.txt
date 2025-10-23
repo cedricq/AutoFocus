@@ -13,9 +13,4 @@ target_include_directories(${PROJECT_NAME}
     )
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
 
-add_executable (${PROJECT_NAME}_main
-    src/main_app.cpp 
-    )
-target_link_libraries(${PROJECT_NAME}_main ${PROJECT_NAME})
-
 add_subdirectory(test)

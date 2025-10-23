@@ -40,16 +40,17 @@ cd build && ctest
 ```
 For more detailed output:
 ```bash
-cd build/application/test && ./unit_tests
+cd build/autofocus/test && ./unit_tests
 ```
 
 
 ### Run the Autofocus Main application
 
-Within `build/application`, run :
+Run the following command :
 
 ```bash
-./autofocus_main test/data/calibration.csv test/data/depth_1.png
+cd build/main
+./autofocus_main data/calibration.csv data/depth_1.png
 ```
 
 Here is output you'll get :
@@ -80,3 +81,7 @@ And one overall file combining all the mask files together (bitwise OR).
 
 Here is an example of a png output: 
 ![Example output](doc/depth_1_1_349_355.png)
+
+### CI
+
+CI has been set up and uses Docker to build the code and run the unit tests suite.
