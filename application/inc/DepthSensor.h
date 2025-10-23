@@ -24,8 +24,8 @@ public:
         return depth_.at<uint16_t>(y, x);
     }
 
-    uint16_t getDepthMin() const { return depth_min_; }
-    uint16_t getDepthMax() const { return depth_max_; }
+    uint16_t getDepthMin() const { return static_cast<uint16_t>(depth_min_); }
+    uint16_t getDepthMax() const { return static_cast<uint16_t>(depth_max_); }
 
 private:
     cv::Mat depth_;

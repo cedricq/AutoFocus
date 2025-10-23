@@ -36,8 +36,6 @@ private:
     int dpn_max_ {0};
 };
 
-
-
 } // namespace
 
 #endif
