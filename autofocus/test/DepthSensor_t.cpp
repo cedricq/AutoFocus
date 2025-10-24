@@ -19,7 +19,7 @@ TEST(DEPTHSENSOR, LoadingDepthImage)
 
     ASSERT_EQ(1920, sensor.getWidth());
     ASSERT_EQ(1080, sensor.getHeight());
-    ASSERT_EQ(0, sensor.getDepthMin());
+    ASSERT_EQ(292, sensor.getDepthMin());
     ASSERT_EQ(397, sensor.getDepthMax());
     ASSERT_EQ(310, sensor.at(1000, 1000));
 }

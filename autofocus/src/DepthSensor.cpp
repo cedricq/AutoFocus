@@ -14,7 +14,8 @@ namespace depth
         if (depth_.type() != CV_16UC1) {
             throw std::runtime_error("Expected 16-bit single-channel PNG");
         }
-        cv::minMaxLoc(depth_, &depth_min_, &depth_max_);
+        cv::Mat mask = (depth_ > 0);  // mask = 255 where depth_ > 0
+        cv::minMaxLoc(depth_, &depth_min_, &depth_max_, nullptr, nullptr, mask);
     }    
 
 } // namespace

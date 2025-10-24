@@ -1,19 +1,17 @@
 ### Exercice Code Technique
 
-Le fichier `calibration.csv` fourni est le résultat d'une calibration d'un couple boiter photo et objectif permettant de connaitre les réglages à effectuer sur l’appareil photo pour obtenir une image nette aux profondeurs voulues (profondeurs orthogonales à l'appareil).
-Les images `depth*.png` fournis sont des images au format PNG 16bit où chaque pixel représente la profondeur (orthogonale en mm) de la scène capturée par l'appareil photo (dans le repère de l'appareil).
+The provided file `calibration.csv` is the result of a calibration of a camera body and lens, allowing you to determine the settings required on the camera to obtain a sharp image at the desired depths (depths orthogonal to the camera). The provided `depth*.png` images are 16-bit PNG files in which each pixel represents the depth (orthogonal in millimeters) of the scene captured by the camera (in the camera’s reference frame).
 
-Ecrire une application C++ en ligne de commande qui prend les deux fichiers (calibration et image de depth) en paramètre et qui simule le shot des images nécessaires pour avoir l’intégralité de la scène vue nette.
-Il faudra écrire une api qui représente le contrôleur de l'appareil photo et qui affiche les actions actions appelées dans la console (set, get...). Le réglage des paramètres de la camera est une action asynchone qui nécessite de vérifier l'état des paramètres avant de prendre une photo. Pour chacune des photos, un masque des zones vues nette est attendu.
-Il faudrait également écrire des tests unitaires sur une fonctionnalité au choix.
+Write a C++ command-line application that takes the two files (calibration and depth image) as parameters and simulates shooting the images necessary to obtain the entire scene in focus. You must implement an API that represents the camera controller and displays the actions called in the console (set, get, etc.). Adjusting the camera parameters is an asynchronous action that requires checking the parameter state before taking a picture. For each photo, a mask of the areas that are in focus is expected. You must also write unit tests for one feature of your choice.
 
-Vocabulaire 
+Vocabulary
 
-| FD | Distance du capteur à la cible |
-|----|--------------------------------|
-| PPN | Premier plan Net |
-| DPN | Dernier Plan Net |
-| Focus Position | Paramètre moteur du Focus |
+| Term           | Meaning                                    |
+|----------------|--------------------------------------------|
+| FD             | Distance from the sensor to the target     |
+| PPN            | Nearest sharp plane (Front In-Focus Plane) |
+| DPN            | Farthest sharp plane (Back In-Focus Plane) |
+| Focus Position | Motor parameter controlling the focus      |
 
 The prodided input data are store gere: `/data`.
 
@@ -57,7 +55,7 @@ Here is output you'll get :
 ```bash
 [OK] Calibration file loaded (36 points)
 [OK] Depth map loaded: 1920x1080 pixels
-Scene depth range: [0, 397] mm
+Scene depth range: [292, 397] mm
 [OK] Focus sequence: 7 positions
 Moving to focus position: 31826
 SNAPSHOT ! @ position 31826 => depth_1_0_343_349.png
@@ -73,14 +71,21 @@ Moving to focus position: 25030
 SNAPSHOT ! @ position 25030 => depth_1_5_379_389.png
 Moving to focus position: 23656
 SNAPSHOT ! @ position 23656 => depth_1_6_390_400.png
-[DONE] Focus sweep complete and merged => depth_1_overall_0_397.png
+[DONE] Focus sweep complete and merged => depth_1_overall_292_397.png
 ```
 
 Within the same directory, it will create N png files containing the mask for each focus position taken.
 And one overall file combining all the mask files together (bitwise OR).
 
 Here is an example of a png output: 
+
 ![Example output](doc/capture.gif)
+
+Regarding the 2 examples present in `/data` folder, here is the input versus output for both :
+
+![Depth1 input output](doc/depth_1_input_output.jpg)
+
+![Depth1 input output](doc/depth_2_input_output.jpg)
 
 ### CI
 

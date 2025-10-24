@@ -86,6 +86,13 @@ int main(int argc, char* argv[]) {
         std::string filename = filename_no_ext + "_overall_"  + std::to_string(ppn_target) + "_" + std::to_string(dpn_target) + ".png";
         cv::imwrite(filename, overall_mask);
         std::cout << "[DONE] Focus sweep complete and merged => " <<filename <<std::endl;
+
+        // Input depth file normalized into 8bits grey format for visualization
+        filename = filename_no_ext + "_input_greyed.png";
+        auto greyed = 64 * depthMat;
+        cv::Mat normalized;
+        depthMat.convertTo(normalized, CV_8U, 255.0 / sensor.getDepthMax());
+        cv::imwrite(filename, normalized);
     }
     catch (const std::exception& e) {
         std::cerr << "Fatal error: " << e.what() << std::endl;
