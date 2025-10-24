@@ -87,11 +87,14 @@ int main(int argc, char* argv[]) {
         cv::imwrite(filename, overall_mask);
         std::cout << "[DONE] Focus sweep complete and merged => " <<filename <<std::endl;
 
-        // Input depth file normalized into 8bits grey format for visualization
+        // Input depth file normalized into 8bits grey format just for visualization
         filename = filename_no_ext + "_input_greyed.png";
-        auto greyed = 64 * depthMat;
+        cv::Mat greyed = cv::max(depthMat - sensor.getDepthMin(), 0);
+        double minVal, maxVal;
+        cv::Point minLoc, maxLoc;
+        cv::minMaxLoc(greyed, &minVal, &maxVal, &minLoc, &maxLoc);
         cv::Mat normalized;
-        depthMat.convertTo(normalized, CV_8U, 255.0 / sensor.getDepthMax());
+        greyed.convertTo(normalized, CV_8U, 255.0 / maxVal);
         cv::imwrite(filename, normalized);
     }
     catch (const std::exception& e) {
