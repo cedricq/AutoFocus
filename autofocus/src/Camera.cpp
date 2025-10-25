@@ -18,10 +18,14 @@ cv::Mat Camera::takePictureMask(const cv::Mat& depthMap, int ppn, int dpn)
 
     cv::Mat mask = cv::Mat::zeros(depthMap.size(), CV_8UC1);
 
-    // Vectorized operation: create mask for pixels within range (0 if in range, 255 otherwise)
+    // Create mask for pixels within range (0 if in range, 255 otherwise)
     cv::inRange(depthMap, cv::Scalar(ppn), cv::Scalar(dpn), mask);
 
+    int count = cv::countNonZero(mask);
+    if (count == 0) mask.release(); // return empty if no pixel is in range
+    
     return mask;
+
 }
 
 Camera::Camera(int minPos, int maxPos)

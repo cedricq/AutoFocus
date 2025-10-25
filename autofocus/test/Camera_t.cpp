@@ -56,3 +56,15 @@ TEST(CAMERA, DepthMask)
     ASSERT_EQ(0, nDiff);
 }
 
+TEST(CAMERA, DepthMaskEmpty)
+{
+    cv::Mat depth = (cv::Mat_<uint16_t>(3, 3) <<
+        380, 395, 410,
+        420, 440, 460,
+        470, 480, 490
+    );
+
+    cv::Mat output = Camera::takePictureMask(depth, 505, 508);
+    ASSERT_TRUE(output.empty()) << "Output is not empty";
+}
+

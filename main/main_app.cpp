@@ -71,15 +71,17 @@ int main(int argc, char* argv[]) {
             // Take snapshot picture
             const auto& mask = cam::Camera::takePictureMask(depthMat, f.ppn, f.dpn);
             
-            // Output png file per snapshot
-            std::string filename = filename_no_ext + "_" + std::to_string(i) 
-                + "_"  + std::to_string(f.ppn) + "_" + std::to_string(f.dpn) + ".png";
-            cv::imwrite(filename, mask);
-            i++;
-            std::cout << "SNAPSHOT ! @ position " << camera.getFocusPosition() <<" => " <<filename << std::endl;
+            if (!mask.empty()) {
+                // Output png file per snapshot
+                std::string filename = filename_no_ext + "_" + std::to_string(i) 
+                    + "_"  + std::to_string(f.ppn) + "_" + std::to_string(f.dpn) + ".png";
+                cv::imwrite(filename, mask);
+                i++;
+                std::cout << "SNAPSHOT ! @ position " << camera.getFocusPosition() <<" => " <<filename << std::endl;
 
-            // Merge the depth masks
-            cv::bitwise_or(overall_mask, mask, overall_mask);
+                // Merge the depth masks
+                cv::bitwise_or(overall_mask, mask, overall_mask);
+            }
         }
 
         // Overall Output png file combining all the masks
