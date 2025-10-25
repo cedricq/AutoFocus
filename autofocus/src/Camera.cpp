@@ -28,10 +28,6 @@ cv::Mat Camera::takePictureMask(const cv::Mat& depthMap, int ppn, int dpn)
 
 }
 
-Camera::Camera(int minPos, int maxPos)
-        : minFocusPosition_(minPos), maxFocusPosition_(maxPos), currentFocusPosition_(minPos)
-    {}
-
 void Camera::setFocusPosition(int position) {
     if (position < minFocusPosition_ || position > maxFocusPosition_) {
         throw std::out_of_range("Focus position out of range");

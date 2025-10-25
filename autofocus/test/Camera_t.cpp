@@ -10,7 +10,8 @@ using namespace cam;
 
 TEST(CAMERA, Creation)
 {
-    auto camera = Camera(0, 500);
+    auto calib = CalibrationData ("data/calibration.csv");
+    auto camera = Camera(0, 500, calib);
     ASSERT_EQ(0, camera.getFocusPosition());
     ASSERT_EQ(0, camera.getMinFocusPosition());
     ASSERT_EQ(500, camera.getMaxFocusPosition());
@@ -18,7 +19,8 @@ TEST(CAMERA, Creation)
 
 TEST(CAMERA, Move)
 {
-    auto camera = Camera(300, 600);
+    auto calib = CalibrationData ("data/calibration.csv");
+    auto camera = Camera(300, 600, calib);
     ASSERT_EQ(300, camera.getFocusPosition());
     ASSERT_EQ(300, camera.getMinFocusPosition());
     ASSERT_EQ(600, camera.getMaxFocusPosition());

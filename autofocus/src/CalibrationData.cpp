@@ -5,7 +5,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace calib
+namespace cam
 {
 
 CalibrationData::CalibrationData(const std::string& filepath) {

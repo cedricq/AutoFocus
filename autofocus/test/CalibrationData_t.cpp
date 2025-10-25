@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-using namespace calib;
+using namespace cam;
 
 
 TEST(CALIB, Creation)

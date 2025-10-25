@@ -38,12 +38,6 @@ int main(int argc, char* argv[]) {
 
     try {
         
-        // Load calibration data
-        //
-        calib::CalibrationData calib(calibFile);
-        std::cout << "[OK] Calibration data loaded: "
-                  << calib.getData().size() << " points" <<std::endl;
-        
         // Load depth map
         //
         depth::DepthSensor sensor(depthFile);
@@ -56,9 +50,19 @@ int main(int argc, char* argv[]) {
         std::cout << "Scene depth range: ["
                   << ppn_target << ", " << dpn_target << "] mm" <<std::endl;
 
+        // Load calibration data
+        //
+        cam::CalibrationData calib(calibFile);
+        std::cout << "[OK] Calibration data loaded: "
+                  << calib.getData().size() << " points" <<std::endl;
+
+        // Create Camera
+        //        
+        cam::Camera camera(0, 100000, calib); // Just a random camera
+
         // Compute focus sequence
         //
-        auto focusList = calib.computeFocusSequence(ppn_target, dpn_target);
+        auto focusList = camera.computeFocusSequence(ppn_target, dpn_target);
         if (focusList.empty()) {
             std::cerr << "No suitable focus sequence found for this scene." <<std::endl;
             return 1;
@@ -69,7 +73,6 @@ int main(int argc, char* argv[]) {
         //
         if (doDisplay) initializeDisplayWindow();
         cv::Mat overall_mask = cv::Mat::zeros(depthMat.size(), CV_8UC1);
-        cam::Camera camera(0, 100000); // Just a random camera
         int i = 0;
         for (const auto& f : focusList) {
             std::cout << "Moving to focus position: "

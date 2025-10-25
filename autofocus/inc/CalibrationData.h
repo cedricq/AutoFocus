@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-namespace calib
+namespace cam
 {
 
 struct CalibrationPoint {
@@ -24,9 +24,9 @@ public:
 
     // Access all data points
     const std::vector<CalibrationPoint>& getData() const { return data_; }
-
     // Compute a focus sequence to achieve a target sharp range
     std::vector<CalibrationPoint> computeFocusSequence(int ppn_target, int dpn_target) const;
+    // Get calibration limits
     int getPPNMin() { return ppn_min_; }
     int getDPNMax() { return dpn_max_; }
 
