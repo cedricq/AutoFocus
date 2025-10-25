@@ -7,10 +7,9 @@
 using namespace calib;
 
 
-TEST(CALIB, LoadCSV)
+TEST(CALIB, Creation)
 {
-    CalibrationData calib;
-    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    CalibrationData calib("data/calibration.csv");
 
     const auto& data = calib.getData();
     ASSERT_EQ(36, data.size());
@@ -31,8 +30,7 @@ TEST(CALIB, LoadCSV)
 
 TEST(CALIB, ComputeFocusSequence)
 {
-    CalibrationData calib;
-    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    CalibrationData calib("data/calibration.csv");
     const auto& data = calib.getData();
 
     int ppn_target = 393;
@@ -62,8 +60,7 @@ TEST(CALIB, ComputeFocusSequence)
 
 TEST(CALIB, ComputeFocusSequencePartialOutOfRangeLow)
 {
-    CalibrationData calib;
-    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    CalibrationData calib("data/calibration.csv");
     const auto& data = calib.getData();
 
     int ppn_target = 0;
@@ -85,8 +82,7 @@ TEST(CALIB, ComputeFocusSequencePartialOutOfRangeLow)
 
 TEST(CALIB, ComputeFocusSequencePartialOutOfRangeHigh)
 {
-    CalibrationData calib;
-    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    CalibrationData calib("data/calibration.csv");
     const auto& data = calib.getData();
 
     int ppn_target = 650;
@@ -108,8 +104,7 @@ TEST(CALIB, ComputeFocusSequencePartialOutOfRangeHigh)
 
 TEST(CALIB, ComputeFocusSequence_NoOutput)
 {
-    CalibrationData calib;
-    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    CalibrationData calib("data/calibration.csv");
     const auto& data = calib.getData();
 
     // ppn and dpn out of calibration possible data
@@ -122,8 +117,7 @@ TEST(CALIB, ComputeFocusSequence_NoOutput)
 
 TEST(CALIB, ComputeFocusSequence_ReversedInput)
 {
-    CalibrationData calib;
-    ASSERT_TRUE(calib.loadFromCSV("data/calibration.csv"));
+    CalibrationData calib("data/calibration.csv");
     const auto& data = calib.getData();
 
     // ppn and dpn in the wrong order

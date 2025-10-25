@@ -19,8 +19,8 @@ struct CalibrationPoint {
 
 class CalibrationData {
 public:
-    // Load all calibration points from a CSV file
-    bool loadFromCSV(const std::string& filepath);
+    CalibrationData(const std::string& filepath);
+    ~CalibrationData() = default;
 
     // Access all data points
     const std::vector<CalibrationPoint>& getData() const { return data_; }
@@ -31,9 +31,10 @@ public:
     int getDPNMax() { return dpn_max_; }
 
 private:
-    std::vector<CalibrationPoint> data_;
+    std::vector<CalibrationPoint> data_ {};
     int ppn_min_ {0};
     int dpn_max_ {0};
+
 };
 
 } // namespace

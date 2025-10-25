@@ -40,20 +40,16 @@ int main(int argc, char* argv[]) {
         
         // Load calibration data
         //
-        calib::CalibrationData calib;
-        if (!calib.loadFromCSV(calibFile)) {
-            return 1;
-        }
-        std::cout << "[OK] Calibration file loaded (" 
-                  << calib.getData().size() << " points)" <<std::endl;
-
+        calib::CalibrationData calib(calibFile);
+        std::cout << "[OK] Calibration data loaded: "
+                  << calib.getData().size() << " points" <<std::endl;
+        
         // Load depth map
         //
         depth::DepthSensor sensor(depthFile);
         const auto& depthMat = sensor.getDepthData();
         std::cout << "[OK] Depth map loaded: "
                   << sensor.getWidth() << "x" << sensor.getHeight() << " pixels" <<std::endl;
-
         // Compute global depth range in mm
         uint16_t ppn_target = sensor.getDepthMin();
         uint16_t dpn_target = sensor.getDepthMax();

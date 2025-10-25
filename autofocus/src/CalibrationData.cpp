@@ -8,43 +8,42 @@
 namespace calib
 {
 
-bool CalibrationData::loadFromCSV(const std::string& filepath) {
+CalibrationData::CalibrationData(const std::string& filepath) {
     std::ifstream file(filepath);
     if (!file.is_open()) {
-        std::cerr << "Error: could not open file " << filepath << std::endl;
-        return false;
+        std::cerr << "Error: could not open file " << filepath << std::endl;    
     }
+    else {
+        std::string line;
+        std::getline(file, line); // Skip the header line
 
-    std::string line;
-    std::getline(file, line); // Skip the header line
+        while (std::getline(file, line)) {
+            std::stringstream ss(line);
+            CalibrationPoint point;
+            std::string token;
 
-    while (std::getline(file, line)) {
-        std::stringstream ss(line);
-        CalibrationPoint point;
-        std::string token;
+            // Read columns separated by commas
+            std::getline(ss, token, ','); point.focusDistance = std::stod(token);
+            std::getline(ss, token, ','); point.aperture      = std::stod(token);
+            std::getline(ss, token, ','); point.focusPosition = std::stod(token);
+            std::getline(ss, token, ','); point.ppn           = std::stod(token);
+            std::getline(ss, token, ','); point.dpn           = std::stod(token);
+            std::getline(ss, token, ','); point.iso           = std::stoi(token);
+            std::getline(ss, token, ','); point.speed         = std::stod(token);
 
-        // Read columns separated by commas
-        std::getline(ss, token, ','); point.focusDistance = std::stod(token);
-        std::getline(ss, token, ','); point.aperture      = std::stod(token);
-        std::getline(ss, token, ','); point.focusPosition = std::stod(token);
-        std::getline(ss, token, ','); point.ppn           = std::stod(token);
-        std::getline(ss, token, ','); point.dpn           = std::stod(token);
-        std::getline(ss, token, ','); point.iso           = std::stoi(token);
-        std::getline(ss, token, ','); point.speed         = std::stod(token);
+            data_.push_back(point);
 
-        data_.push_back(point);
-
-        // Record min ppn and max dpn possible values
-        if (ppn_min_ > point.ppn || ppn_min_ == 0)
-        {
-            ppn_min_ = point.ppn;
-        }
-        if (dpn_max_ < point.dpn || dpn_max_ == 0)
-        {
-            dpn_max_ = point.dpn;
+            // Record min ppn and max dpn possible values
+            if (ppn_min_ > point.ppn || ppn_min_ == 0)
+            {
+                ppn_min_ = point.ppn;
+            }
+            if (dpn_max_ < point.dpn || dpn_max_ == 0)
+            {
+                dpn_max_ = point.dpn;
+            }
         }
     }
-    return true;
 }
 
 std::vector<CalibrationPoint> CalibrationData::computeFocusSequence(int ppn, int dpn) const {
