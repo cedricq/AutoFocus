@@ -7,6 +7,19 @@
 #include <stdexcept>
 #include <filesystem>
 
+std::string winName = "Mask output";
+cv::Mat zero = cv::Mat::zeros(1980, 1080, CV_8UC3);
+
+void initializeDisplayWindow() {
+    cv::namedWindow(winName, cv::WINDOW_AUTOSIZE);
+    cv::imshow(winName, zero);
+    cv::moveWindow(winName, 1, 1);
+}
+
+void displayImage(cv::Mat frame, int time) {
+    cv::imshow(winName, frame);
+    cv::waitKey(time);
+}
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
@@ -56,6 +69,7 @@ int main(int argc, char* argv[]) {
 
         // Move focus camera motor and take snapshot
         //
+        initializeDisplayWindow();
         cv::Mat overall_mask = cv::Mat::zeros(depthMat.size(), CV_8UC1);
         cam::Camera camera(0, 100000); // Just a random camera
         int i = 0;
@@ -65,13 +79,14 @@ int main(int argc, char* argv[]) {
 
             camera.setFocusPosition(f.focusPosition);
 
-            // TODO: Wait until camera focus is in position & Timeout & Likely running on a different thread
+            // Simulate waiting time until focus is in position
             while(camera.getFocusPosition() != f.focusPosition);
 
             // Take snapshot picture
             const auto& mask = cam::Camera::takePictureMask(depthMat, f.ppn, f.dpn);
             
             if (!mask.empty()) {
+                displayImage(mask, 500);
                 // Output png file per snapshot
                 std::string filename = filename_no_ext + "_" + std::to_string(i) 
                     + "_"  + std::to_string(f.ppn) + "_" + std::to_string(f.dpn) + ".png";
@@ -85,6 +100,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Overall Output png file combining all the masks
+        displayImage(overall_mask, 1000);
         std::string filename = filename_no_ext + "_overall_"  + std::to_string(ppn_target) + "_" + std::to_string(dpn_target) + ".png";
         cv::imwrite(filename, overall_mask);
         std::cout << "[DONE] Focus sweep complete and merged => " <<filename <<std::endl;
