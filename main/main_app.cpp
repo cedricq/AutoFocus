@@ -8,15 +8,14 @@
 #include <filesystem>
 
 std::string winName = "Mask output";
-cv::Mat zero = cv::Mat::zeros(1980, 1080, CV_8UC3);
 
 void initializeDisplayWindow() {
-    cv::namedWindow(winName, cv::WINDOW_AUTOSIZE);
-    cv::imshow(winName, zero);
+    cv::namedWindow(winName, cv::WINDOW_NORMAL);
     cv::moveWindow(winName, 1, 1);
 }
 
 void displayImage(cv::Mat frame, int time) {
+    cv::resizeWindow(winName, frame.cols / 2, frame.rows / 2);
     cv::imshow(winName, frame);
     cv::waitKey(time);
 }
@@ -24,12 +23,15 @@ void displayImage(cv::Mat frame, int time) {
 int main(int argc, char* argv[]) {
     if (argc < 3) {
         std::cerr << "Usage: " << argv[0]
-                  << " <calibration.csv> <depth_map.png>" <<std::endl;
+                  << " <calibration.csv> <depth_map.png> (--display)" <<std::endl;
         return 1;
     }
 
     const std::string calibFile = argv[1];
     const std::string depthFile = argv[2];
+    std::string display = "";
+    if (argc == 4) display = argv[3];
+    const bool doDisplay = (display == "--display");
 
     std::filesystem::path pathObj(depthFile);
     std::string filename_no_ext = pathObj.stem().string();
@@ -69,7 +71,7 @@ int main(int argc, char* argv[]) {
 
         // Move focus camera motor and take snapshot
         //
-        initializeDisplayWindow();
+        if (doDisplay) initializeDisplayWindow();
         cv::Mat overall_mask = cv::Mat::zeros(depthMat.size(), CV_8UC1);
         cam::Camera camera(0, 100000); // Just a random camera
         int i = 0;
@@ -86,7 +88,7 @@ int main(int argc, char* argv[]) {
             const auto& mask = cam::Camera::takePictureMask(depthMat, f.ppn, f.dpn);
             
             if (!mask.empty()) {
-                displayImage(mask, 500);
+                if (doDisplay) displayImage(mask, 500);
                 // Output png file per snapshot
                 std::string filename = filename_no_ext + "_" + std::to_string(i) 
                     + "_"  + std::to_string(f.ppn) + "_" + std::to_string(f.dpn) + ".png";
@@ -100,7 +102,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Overall Output png file combining all the masks
-        displayImage(overall_mask, 1000);
+        if (doDisplay) displayImage(overall_mask, 1000);
         std::string filename = filename_no_ext + "_overall_"  + std::to_string(ppn_target) + "_" + std::to_string(dpn_target) + ".png";
         cv::imwrite(filename, overall_mask);
         std::cout << "[DONE] Focus sweep complete and merged => " <<filename <<std::endl;
