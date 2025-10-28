@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(alarm_project)
+project(autofocus_project)
 
 enable_testing()
 
@@ -20,5 +20,5 @@ include(CTest)
 find_package(OpenCV REQUIRED)
 
 
-add_subdirectory(autofocus)
+add_subdirectory(components)
 add_subdirectory(main)

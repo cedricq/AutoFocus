@@ -38,7 +38,7 @@ cd build && ctest
 ```
 For more detailed output:
 ```bash
-cd build/autofocus/test && ./unit_tests
+cd build/components/test && ./unit_tests
 ```
 
 
