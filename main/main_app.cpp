@@ -37,30 +37,29 @@ int main(int argc, char* argv[]) {
     std::string filename_no_ext = pathObj.stem().string();
 
     try {
-        
-        // Load depth map
+
         //
-        depth::DepthSensor sensor(depthFile);
-        const auto& depthMat = sensor.getDepthData();
+        // 1. Load depth map data
+        //
+        depth::DepthSensor depth_map(depthFile);
+        const auto& depthMat = depth_map.getDepthData();
         std::cout << "[OK] Depth map loaded: "
-                  << sensor.getWidth() << "x" << sensor.getHeight() << " pixels" <<std::endl;
-        // Compute global depth range in mm
-        uint16_t ppn_target = sensor.getDepthMin();
-        uint16_t dpn_target = sensor.getDepthMax();
+                  << depth_map.getWidth() << "x" << depth_map.getHeight() << " pixels" <<std::endl;
+        uint16_t ppn_target = depth_map.getDepthMin();
+        uint16_t dpn_target = depth_map.getDepthMax();
         std::cout << "Scene depth range: ["
                   << ppn_target << ", " << dpn_target << "] mm" <<std::endl;
 
-        // Load calibration data
+        //
+        // 2. Load calibration data and create Camera
         //
         cam::CalibrationData calib(calibFile);
         std::cout << "[OK] Calibration data loaded: "
                   << calib.getData().size() << " points" <<std::endl;
-
-        // Create Camera
-        //        
         cam::Camera camera(0, 100000, calib); // Just a random camera
 
-        // Compute focus sequence
+        //
+        // 3. Compute focus sequence based on depth map range
         //
         auto focusList = camera.computeFocusSequence(ppn_target, dpn_target);
         if (focusList.empty()) {
@@ -69,7 +68,8 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "[OK] Focus sequence: " << focusList.size() << " positions" <<std::endl;
 
-        // Move focus camera motor and take snapshot
+        //
+        // 4. Move focus camera motor and take snapshot
         //
         if (doDisplay) initializeDisplayWindow();
         cv::Mat overall_mask = cv::Mat::zeros(depthMat.size(), CV_8UC1);
@@ -81,11 +81,13 @@ int main(int argc, char* argv[]) {
             camera.setFocusPosition(f.focusPosition);
 
             // Simulate waiting time until focus is in position
+            // TODO: separate thread for focus adjustment
             while(camera.getFocusPosition() != f.focusPosition);
 
             // Take snapshot picture
             const auto& mask = cam::Camera::takePictureMask(depthMat, f.ppn, f.dpn);
             
+            // Generate output image per snapshot
             if (!mask.empty()) {
                 if (doDisplay) displayImage(mask, 500);
                 // Output png file per snapshot
@@ -100,7 +102,9 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        // Overall Output png file combining all the masks
+        //
+        // 5. Generate output overall images
+        //
         if (doDisplay) displayImage(overall_mask, 1000);
         std::string filename = filename_no_ext + "_overall_"  + std::to_string(ppn_target) + "_" + std::to_string(dpn_target) + ".png";
         cv::imwrite(filename, overall_mask);
@@ -108,7 +112,7 @@ int main(int argc, char* argv[]) {
 
         // Input depth file normalized into 8bits grey format just for visualization
         filename = filename_no_ext + "_input_greyed.png";
-        cv::Mat greyed = cv::max(depthMat - sensor.getDepthMin(), 0);
+        cv::Mat greyed = cv::max(depthMat - depth_map.getDepthMin(), 0);
         double minVal, maxVal;
         cv::Point minLoc, maxLoc;
         cv::minMaxLoc(greyed, &minVal, &maxVal, &minLoc, &maxLoc);

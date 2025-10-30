@@ -22,10 +22,17 @@ public:
     CalibrationData(const std::string& filepath);
     ~CalibrationData() = default;
 
+    /**
+     * @brief Computes a sequence of calibration points for focus adjustment
+     * 
+     * @param ppn_target, dpn_target Target range for [PPN, DPN]
+     * @return std::vector<CalibrationPoint> Vector containing the sequence of calibration points
+     */
+    std::vector<CalibrationPoint> computeFocusSequence(int ppn_target, int dpn_target) const;
+    
     // Access all data points
     const std::vector<CalibrationPoint>& getData() const { return data_; }
-    // Compute a focus sequence to achieve a target sharp range
-    std::vector<CalibrationPoint> computeFocusSequence(int ppn_target, int dpn_target) const;
+    
     // Get calibration limits
     int getPPNMin() { return ppn_min_; }
     int getDPNMax() { return dpn_max_; }

@@ -9,18 +9,18 @@ using namespace depth;
 
 TEST(DEPTHSENSOR, LoadingDepthImage)
 {
-    DepthSensor sensor("data/depth_1.png");
+    DepthSensor depth_map("data/depth_1.png");
 
     std::cout << "Loaded depth image: " 
-                  << sensor.getWidth() << "x" << sensor.getHeight() << std::endl;
+                  << depth_map.getWidth() << "x" << depth_map.getHeight() << std::endl;
 
     std::cout << "Depth image: [ " 
-                  << sensor.getDepthMin() << " " << sensor.getDepthMax() << " ]" << std::endl;
+                  << depth_map.getDepthMin() << " " << depth_map.getDepthMax() << " ]" << std::endl;
 
-    ASSERT_EQ(1920, sensor.getWidth());
-    ASSERT_EQ(1080, sensor.getHeight());
-    ASSERT_EQ(292, sensor.getDepthMin());
-    ASSERT_EQ(397, sensor.getDepthMax());
-    ASSERT_EQ(310, sensor.at(1000, 1000));
+    ASSERT_EQ(1920, depth_map.getWidth());
+    ASSERT_EQ(1080, depth_map.getHeight());
+    ASSERT_EQ(292, depth_map.getDepthMin());
+    ASSERT_EQ(397, depth_map.getDepthMax());
+    ASSERT_EQ(310, depth_map.at(1000, 1000));
 }
 
