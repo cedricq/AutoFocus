@@ -41,8 +41,8 @@ public:
     int getWidth() const { return depth_.cols; }
     int getHeight() const { return depth_.rows; }
 
-    uint16_t getDepthMin() const { return static_cast<uint16_t>(depth_min_); }
-    uint16_t getDepthMax() const { return static_cast<uint16_t>(depth_max_); }
+    uint16_t getMin() const { return static_cast<uint16_t>(depth_min_); }
+    uint16_t getMax() const { return static_cast<uint16_t>(depth_max_); }
 
 private:
     cv::Mat depth_      {};

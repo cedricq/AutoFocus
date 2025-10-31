@@ -45,8 +45,8 @@ public:
      * @brief Creates a depth map mask based on specified parameters.
      * 
      * @param depthMap Input depth map matrix
-     * @param ppn Pixels Per Normalized unit
-     * @param dpn Depth Per Normalized unit
+     * @param ppn Nearest sharp plane (Front In-Focus Plane)
+     * @param dpn Farthest sharp plane (Back In-Focus Plane)
      * @return cv::Mat Resulting mask
      */
     static cv::Mat takePictureMask(const cv::Mat& depthMap, int ppn, int dpn);
@@ -65,8 +65,8 @@ public:
     /**
      * @brief Computes a sequence of calibration points for focusing
      * 
-     * @param ppn_target The target physical pixel number
-     * @param dpn_target The target digital pixel number
+     * @param ppn_target Nearest sharp plane (Front In-Focus Plane)
+     * @param dpn_target Farthest sharp plane (Back In-Focus Plane)
      * @return std::vector<CalibrationPoint> A vector of calibration points representing the focus sequence
      */
     std::vector<CalibrationPoint> computeFocusSequence(int ppn_target, int dpn_target) const {

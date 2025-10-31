@@ -15,12 +15,12 @@ TEST(DEPTHSENSOR, LoadingDepthImage)
                   << depth_map.getWidth() << "x" << depth_map.getHeight() << std::endl;
 
     std::cout << "Depth image: [ " 
-                  << depth_map.getDepthMin() << " " << depth_map.getDepthMax() << " ]" << std::endl;
+                  << depth_map.getMin() << " " << depth_map.getMax() << " ]" << std::endl;
 
     ASSERT_EQ(1920, depth_map.getWidth());
     ASSERT_EQ(1080, depth_map.getHeight());
-    ASSERT_EQ(292, depth_map.getDepthMin());
-    ASSERT_EQ(397, depth_map.getDepthMax());
+    ASSERT_EQ(292, depth_map.getMin());
+    ASSERT_EQ(397, depth_map.getMax());
     ASSERT_EQ(310, depth_map.at(1000, 1000));
 }
 

@@ -45,8 +45,8 @@ int main(int argc, char* argv[]) {
         const auto& depthMat = depth_map.getDepthData();
         std::cout << "[OK] Depth map loaded: "
                   << depth_map.getWidth() << "x" << depth_map.getHeight() << " pixels" <<std::endl;
-        uint16_t ppn_target = depth_map.getDepthMin();
-        uint16_t dpn_target = depth_map.getDepthMax();
+        uint16_t ppn_target = depth_map.getMin();
+        uint16_t dpn_target = depth_map.getMax();
         std::cout << "Scene depth range: ["
                   << ppn_target << ", " << dpn_target << "] mm" <<std::endl;
 
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
 
         // Input depth file normalized into 8bits grey format just for visualization
         filename = filename_no_ext + "_input_greyed.png";
-        cv::Mat greyed = cv::max(depthMat - depth_map.getDepthMin(), 0);
+        cv::Mat greyed = cv::max(depthMat - depth_map.getMin(), 0);
         double minVal, maxVal;
         cv::Point minLoc, maxLoc;
         cv::minMaxLoc(greyed, &minVal, &maxVal, &minLoc, &maxLoc);
